@@ -60,7 +60,6 @@ class Button:
         return inverted_color_val
 
 
-
 class Img_Button(Button):
     
     def __init__(self, image_path:str, width:int, height:int):

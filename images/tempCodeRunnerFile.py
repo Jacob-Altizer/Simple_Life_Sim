@@ -1,0 +1,1 @@
+image = pygame.transform.scale(image, (math.floor(sprite_width * scale), math.floor(sprite_height * scale)))
