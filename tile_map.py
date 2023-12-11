@@ -170,7 +170,7 @@ class Tile_Code():
                 tile_index = seed[row][column]
 
                 if tile_index > 0:
-                    pygame.draw.rect(surface, (39,153,36), (column * tile_size, row * tile_size, tile_size, tile_size))
+                    pygame.draw.rect(surface, (39,120,36), (column * tile_size, row * tile_size, tile_size, tile_size))
                 if tile_index < 0:
                     pygame.draw.rect(surface, (28,163,236), (column * tile_size, row * tile_size, tile_size, tile_size))
             

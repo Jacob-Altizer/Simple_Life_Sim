@@ -1,1 +1,1 @@
-500
+        bunny.wander((WIN_WIDTH, WIN_HEIGHT), noi_buffer)

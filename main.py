@@ -8,7 +8,7 @@ TILE_SIZE = 16
 GRID_WIDTH = MAP_WIDTH // TILE_SIZE
 GRID_HEIGHT = MAP_HEIGHT // TILE_SIZE
 
-LAND_COLOR = (39, 153, 36, 255)
+LAND_COLOR = (39, 120, 36, 255)
 WATER_COLOR = (28, 163, 236, 255)
 
 WIN_WIDTH, WIN_HEIGHT = (GRID_WIDTH * TILE_SIZE), (GRID_HEIGHT * TILE_SIZE)
@@ -38,21 +38,23 @@ exit_button = button.Img_Button("images/exit_button.png", 70, 70)
 refresh_map_btn = button.Img_Button("images/refresh_arrow.png", 100, 100)
 
 rocks = pygame.sprite.Group()
+bunnies = pygame.sprite.Group()
+plants = pygame.sprite.Group()
 
 first_tick = True
 
-def populate_world(group:pygame.sprite.Group, surface):
+tick_count = 0
 
-    for ent in spawn.Spawn.spawn_random(surface, entity.Rock, sprites.Rock_Sprite.sprites["rock"], LAND_COLOR, 60):
+def populate_world(group:pygame.sprite.Group, surface, Entity, amount):
+
+    for ent in spawn.Spawn.spawn_random(surface, Entity, LAND_COLOR, amount):
         group.add(ent)
 
 while running:
 
-    new_map.draw_map(GRID_WIDTH, GRID_HEIGHT, screen, TILE_SIZE)
+    tick_count += 1
 
-    # draw buttons over other layers
-    exit_button.draw(screen, math.floor(MAP_WIDTH * 0.96), math.floor(MAP_HEIGHT * 0.01))
-    refresh_map_btn.draw(screen, math.floor(MAP_WIDTH * 0.01), math.floor(MAP_HEIGHT * 0.008))
+    new_map.draw_map(GRID_WIDTH, GRID_HEIGHT, screen, TILE_SIZE)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -67,24 +69,51 @@ while running:
             if refresh_map_btn.is_clicked(position[0], position[1]):
                 new_map.generate_seed(x_size=GRID_WIDTH, y_size=GRID_HEIGHT, fill_percent=LAND_FILL_PERECENT)
                 first_tick = True
-                for rock in rocks:
-                    rock.kill()
 
     for rock in rocks:
-        rock.wander()
+        rock.move_to_land(screen, WATER_COLOR, LAND_COLOR)
+
+    for bunny in bunnies:
+        if bunny.expire():
+            bunny.kill()
+
+        if not bunny.seeking:
+            bunny.wander((WIN_WIDTH, WIN_HEIGHT))
         
+        for grass in plants:
+            bunny.seek(grass)
+            bunny.visualize_path(screen)
+
+    fed_bunnies = pygame.sprite.groupcollide(bunnies, plants, False, True)
+
+    for bunny in fed_bunnies:
+        bunny.seeking = False
+
+ 
+    bunnies.update()
+    bunnies.draw(screen)
+
+    plants.update()
+    plants.draw(screen)
+    
     rocks.update()
     rocks.draw(screen)
 
-    if first_tick:
-        populate_world(rocks, screen)
-        print(len(rocks))
+    # draw buttons over other layers
+    exit_button.draw(screen, math.floor(MAP_WIDTH * 0.96), math.floor(MAP_HEIGHT * 0.01))
+    refresh_map_btn.draw(screen, math.floor(MAP_WIDTH * 0.01), math.floor(MAP_HEIGHT * 0.008))
 
     pygame.display.flip()
+
+    if first_tick:
+        populate_world(rocks, screen, entity.Rock, 40)
+        populate_world(bunnies, screen, entity.Bunny, 120)
+        populate_world(plants, screen, entity.Grass, 300)
     
     clock.tick(FPS)
 
     first_tick = False
 
 pygame.quit()
+print(tick_count)
 

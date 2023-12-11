@@ -28,7 +28,7 @@ class Bunny_Sprite(Sprite):
                         0, 0, 
                         BUNNY_SPRITE_WIDTH, 
                         BUNNY_SPRITE_HEIGHT,
-                        0.5),
+                        0.06),
 
         "light_brown_bunny": 
         Sprite.get_image(bunny_sprite_sheet, 
@@ -81,7 +81,7 @@ class Plant_Sprite(Sprite):
                         0, 0,
                         LONG_GRASS_SPRITE_WIDTH,
                         LONG_GRASS_SPRITE_HEIGHT,
-                        0.5),
+                        0.05),
     }
 
 
