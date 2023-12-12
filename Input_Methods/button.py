@@ -94,27 +94,46 @@ class Img_Button(Button):
 class Roller_Button(Button):
 
     def __init__(self, color:tuple, width:int, height:int, text:str = '', font:str = 'arial', text_color:tuple = (0, 0, 0)) -> None:
+        super().__init__(color, width, height, text, font, text_color)
         self.value = 0
         self.arrow_img = pygame.image.load("images/small_arrow.png")
+        self.img_width, self.img_height = self.arrow_img.get_width(), self.arrow_img.get_height()
         self.midline = self.height // 2
+        self.roller_surface = pygame.surface.Surface((self.width, self.height))
 
-        super().__init__(color, width, height, text, font, text_color)
 
+    def build_roller(self) -> pygame.surface.Surface:
+        
+        text_surface = self.font.render(bytes(self.value), True, self.text_color)
+        text_rect = text_surface.get_rect(center=(self.x, self.y))
+        self.roller_surface.blit(text_surface, text_rect.center)
 
-    def build_roller(self):
+        arrow_img_ratio = self.img_width / self.img_height
+        # self.width, (self.height // arrow_img_ratio)
+        scaled_img = pygame.transform.scale(self.arrow_img, (100, 200))
+        top_arrow, bottom_arrow = pygame.surface.Surface((scaled_img.get_width(), scaled_img.get_height())), \
+                                  pygame.surface.Surface((scaled_img.get_width(), scaled_img.get_height()))
+        
+        top_arrow.blit(self.arrow_img, (0,0))
+        bottom_arrow.blit(self.arrow_img, (0,0))
+        self.roller_surface.blit(top_arrow, (0, 0))
+        bottom_arrow = pygame.transform.flip(bottom_arrow, False, True)
+        self.roller_surface.blit(bottom_arrow, (0, self.roller_surface.get_height()))
+
+        return self.roller_surface
+
+    def bottom_arrow():
         pass
 
 
-    def arrow_is_clicked(self, step:int, mouse_pos):
+    def is_clicked(self, step:int, mouse_pos):
 
         if mouse_pos[1] > self.midline:
-            
-
-        if decrement:
-            self.value -= step
-        if increment:
             self.value += step
 
+        if mouse_pos[1] < self.midline:
+            self.value -= step
+            
 
     def get_int_value(self) -> int:
         return self.value

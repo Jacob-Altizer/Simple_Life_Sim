@@ -7,10 +7,10 @@ entity_ids:list = []
 
 class Entity(pygame.sprite.Sprite):
 
-    def __init__(self, current_x:int, current_y:int, sprite_img:pygame.Surface, step_buffer) -> None:
+    def __init__(self, current_x:int, current_y:int, sprite_img:pygame.Surface, step_buffer, name) -> None:
         
         pygame.sprite.Sprite.__init__(self)
-
+        self.name = name
         # self.ent_id = self.generate_id()
         self.current_x = current_x
         self.current_y = current_y
@@ -183,12 +183,12 @@ class Entity(pygame.sprite.Sprite):
 class Rock(Entity):
 
     def __init__(self, current_x:int, current_y:int):
-        super().__init__(current_x, current_y, sprites.Rock_Sprite.sprites["rock"], 0)
+        super().__init__(current_x, current_y, sprites.Rock_Sprite.sprites["rock"], 0, "rock")
 
 
 class Grass(Entity):
     def __init__(self, current_x:int, current_y:int):
-        super().__init__(current_x, current_y, sprites.Plant_Sprite.sprites["long_grass"], 0)
+        super().__init__(current_x, current_y, sprites.Plant_Sprite.sprites["long_grass"], 0, "long_grass")
 
 
 class Bunny(Entity):
@@ -201,16 +201,15 @@ class Bunny(Entity):
         self.speed = 5
         self.view_radius = 50
 
-        self.hunger_drain = 0.08
+        self.hunger_drain = 0.04
         self.life_drain = 0.008
 
         img = random.choice(("gray_bunny", "light_brown_bunny", "white_bunny", "dark_brown_bunny"))
-        super().__init__(current_x, current_y, sprites.Bunny_Sprite.sprites["gray_bunny"], 5)
+        super().__init__(current_x, current_y, sprites.Bunny_Sprite.sprites["gray_bunny"], 5, "bunny")
 
 
 class Cat(Entity):
     def __init__(self, current_x:int, current_y:int) -> None:
-
         self.life_span = random.randint(9,10)
         self.hunger = random.randint(4,5)
         self.gender = random.randint(0,1) # 0 being male, 1 being female
@@ -222,4 +221,4 @@ class Cat(Entity):
         self.hunger_drain = 0.06
         self.life_drain = 0.004
         
-        super().__init__(current_x, current_y, sprites.Cat_Sprite.sprites["orange_cat"], 5)
+        super().__init__(current_x, current_y, sprites.Cat_Sprite.sprites["orange_cat"], 5, "cat")
