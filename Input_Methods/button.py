@@ -30,7 +30,10 @@ class Button:
             pygame.Surface.blit(self.text, (self.x + (self.width/2 - rendered_text.get_width()/2), self.y + (self.height/2 - rendered_text.get_height()/2)))
 
         
-    def is_clicked(self, mouse_pos_x, mouse_pos_y) -> bool:
+    def is_clicked(self, position:list) -> bool:
+
+        mouse_pos_x, mouse_pos_y = position[0], position[1]
+        
         clicked = False
         bounds = {
             "left_extreme": self.x,
@@ -81,10 +84,38 @@ class Img_Button(Button):
         self.resize(self.image)
         surface.blit(self.image, (self.x, self.y))
 
-    def is_clicked(self, mouse_pos_x, mouse_pos_y) -> bool:
-        return super().is_clicked(mouse_pos_x, mouse_pos_y)
+    def is_clicked(self, position) -> bool:
+        return super().is_clicked(position)
     
     def invert_color(self, color_vals: tuple) -> tuple:
         return super().invert_color(color_vals)
 
+
+class Roller_Button(Button):
+
+    def __init__(self, color:tuple, width:int, height:int, text:str = '', font:str = 'arial', text_color:tuple = (0, 0, 0)) -> None:
+        self.value = 0
+        self.arrow_img = pygame.image.load("images/small_arrow.png")
+        self.midline = self.height // 2
+
+        super().__init__(color, width, height, text, font, text_color)
+
+
+    def build_roller(self):
+        pass
+
+
+    def arrow_is_clicked(self, step:int, mouse_pos):
+
+        if mouse_pos[1] > self.midline:
+            
+
+        if decrement:
+            self.value -= step
+        if increment:
+            self.value += step
+
+
+    def get_int_value(self) -> int:
+        return self.value
 

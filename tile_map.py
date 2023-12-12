@@ -128,7 +128,7 @@ class Tile_Code():
         """saves map seed list to csv file"""
 
         path = f"{self.file_path}/data"
-        print(path + (f"{file_name}.csv"))
+        # print(path + (f"{file_name}.csv"))
         
         with open(f"{path}/{file_name}.csv", 'w', newline='') as file:
             writer = csv.writer(file)

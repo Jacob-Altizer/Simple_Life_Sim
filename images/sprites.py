@@ -85,4 +85,20 @@ class Plant_Sprite(Sprite):
     }
 
 
+class Cat_Sprite(Sprite):
+
+    CAT_SPRITE_WIDTH, CAT_SPRITE_HEIGHT = 480, 448
+
+    cat_sprite_sheet = pygame.image.load("images/cat.png")
+
+    sprites = {
+        "orange_cat":
+        Sprite.get_image(cat_sprite_sheet,
+                         0, 0,
+                         CAT_SPRITE_WIDTH,
+                         CAT_SPRITE_HEIGHT,
+                         0.06),
+    }
+
+
 Bunny_Sprite.sprites["gray_bunny"]
