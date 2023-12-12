@@ -55,22 +55,14 @@ class Entity(pygame.sprite.Sprite):
             return new_id
           
 
-    def step(self, step_length, destination_point:list):
+    def step(self, step_length, destination_point:list, surface:pygame.surface.Surface):
         Dx = destination_point[0]
         Dy = destination_point[1]
 
+        # if surface.get_at((math.ceil(Dx), math.ceil(Dy))) != (28, 163, 236, 255):
+
         distance = math.sqrt((self.current_x - Dx) ** 2 + (self.current_y - Dy) ** 2)
     
-        # if distance != 0:
-        #     if Dx >= self.current_x:
-        #         self.current_x -= math.floor((step_length * (Dx - self.current_x) / distance))
-        #     if Dx <= self.current_x:
-        #         self.current_x += math.floor((step_length * (Dx - self.current_x) / distance))
-        #     if Dy >= self.current_y:
-        #         self.current_y -= math.floor((step_length * (Dy - self.current_y) / distance))
-        #     if Dy <= self.current_y:
-        #         self.current_y += math.floor((step_length * (Dy - self.current_y) / distance))
-
         if distance != 0:
             self.current_x += (step_length * (Dx - self.current_x) / distance)
             self.current_y += (step_length * (Dy - self.current_y) / distance)
@@ -78,7 +70,7 @@ class Entity(pygame.sprite.Sprite):
         self.update_position(self.current_x, self.current_y)
 
 
-    def wander(self, range:list):
+    def wander(self, surface:pygame.surface.Surface, range:list, avoid_color):
         range_x = range[0]
         range_y = range[1]
 
@@ -94,7 +86,7 @@ class Entity(pygame.sprite.Sprite):
 
         self.current_poi = [self.average(self.last_xs), self.average(self.last_ys)]
 
-        self.step(2, self.current_poi)
+        self.step(2, self.current_poi, surface=surface)
 
 
     def average(self, list):
@@ -106,17 +98,29 @@ class Entity(pygame.sprite.Sprite):
         self.rect.center = (x, y)
 
 
-    def move_to_land(self, surface:pygame.surface.Surface, avoid_color, good_color):
-        while surface.get_at((self.current_x, self.current_y)) == avoid_color:
-            self.current_x = random.randint(16, surface.get_width()-15)
-            self.current_y = random.randint(16, surface.get_height()-15)
+    def move_to_land(self, surface:pygame.surface.Surface, avoid_color):
+
+        try:
+            if surface.get_at((math.floor(self.current_x), math.floor(self.current_y))) == avoid_color:
+
+                self.current_x += 5
+                self.current_y += 5
+
+                if (self.current_x >= surface.get_width()) or (self.current_y > surface.get_height()):
+                    self.current_x -= 100
+                    self.current_y -= 100
+
+                self.update_position(self.current_x, self.current_y)
+
+        except(IndexError):
+            pass
 
 
     def visualize_path(self, surface):
         pygame.draw.line(surface, "gray", (self.current_x, self.current_y), self.current_poi, 1)
 
 
-    def seek(self, Target) -> bool:
+    def seek(self, surface, Target) -> bool:
         Target_cords = [Target.current_x, Target.current_y]
 
         Dx = Target_cords[0]
@@ -126,15 +130,22 @@ class Entity(pygame.sprite.Sprite):
 
         if distance < self.view_radius:
             self.current_poi = Target_cords
-            self.step(2, (self.current_poi))
+            self.step(2, (self.current_poi), surface=surface)
 
             self.seeking = True
 
 
-    def reproduce(self, ) -> bool:
+    def reproduce(self, tick_threshold, current_tick, condition:bool = None) -> bool:
 
+        if condition != None:
+            if (current_tick >= tick_threshold) and (condition == True):
+                return True
+            
+        elif (current_tick >= tick_threshold):
+            return True
         
-
+        else:
+            return False
 
 
     def expire(self) -> bool:
@@ -145,8 +156,8 @@ class Entity(pygame.sprite.Sprite):
         if self.hunger <= 0:
             return True
         
-        self.hunger -= .001
-        self.life_span -= .01
+        self.hunger -= .05
+        self.life_span -= .008
 
 
 class Rock(Entity):
@@ -164,4 +175,6 @@ class Bunny(Entity):
     def __init__(self, current_x:int, current_y:int):
         self.life_span = random.randint(5,7)
         self.hunger = random.randint(5,10)
+        self.gender = random.randint(0,1) # 0 being male, 1 being female
+        self.pregnant = 0 # 0 being not pregnant, being pregnant
         super().__init__(current_x, current_y, sprites.Bunny_Sprite.sprites["gray_bunny"], 5)

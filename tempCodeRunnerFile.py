@@ -1,1 +1,1 @@
-        bunny.wander((WIN_WIDTH, WIN_HEIGHT), noi_buffer)
+(28, 163, 236, 255)
